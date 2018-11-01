@@ -30,8 +30,6 @@ module fpmul_cu (
     output reg NAN_LD,
     output reg INF_RST,
     output reg INF_LD,
-    output reg DNF_RST,
-    output reg DNF_LD,
     output reg ZF_RST,
     output reg ZF_LD,
     output reg P_RST,
@@ -68,7 +66,7 @@ reg [3:0] CS, NS;
 
 wire Normal;
 
-assign Normal = ~(NaN | Inf | Zero); //1 if all flags are zero
+assign Normal = ~(NaN | Inf | Zero); //1 if all operand flags are zero
 
 //update CS
 always @ (posedge clk)
@@ -108,7 +106,7 @@ begin
         end
         S8: begin NS = S9;
         end
-        S9: begin NS = S1;
+        S9: begin NS = S0;
         end
     endcase
 end
@@ -137,14 +135,6 @@ begin
     UF_LD = 1'b0;
     OF_RST = 1'b0;
     OF_LD = 1'b0;
-    NAN_RST = 1'b0;
-    NAN_LD = 1'b0;
-    INF_RST = 1'b0;
-    INF_LD = 1'b0;
-    DNF_RST = 1'b0;
-    DNF_LD = 1'b0;
-    ZF_RST = 1'b0;
-    ZF_LD = 1'b0;
     P_RST = 1'b0;
     P_LD = 1'b0;
     Done = 1'b0;
@@ -154,9 +144,6 @@ begin
         //reset product, underflow/overflow, NaN, Inf and ZF
             OF_RST = 1'b1;
             UF_RST = 1'b1;
-            NAN_RST = 1'b1;
-            INF_RST = 1'b1;
-            ZF_RST = 1'b1;
             P_RST = 1'b1;
         end
         S1: begin //load in all operand registers
@@ -237,10 +224,6 @@ begin
         end
         end
         S8: begin //package the product and load product abnormal flags
-            NAN_LD = 1'b1;
-            INF_LD = 1'b1;
-            DNF_LD = 1'b1;
-            ZF_LD = 1'b1;
             P_LD = 1'b1;
         end
         S9: begin //signal completion of the computation
@@ -249,7 +232,6 @@ begin
         
         default: begin
         end
-        
     endcase
 end
 

@@ -10,7 +10,7 @@ endmodule
 
 //Parameterized 2-input subtractor
 module subtractor #(parameter WIDTH = 8)(
-    input [WIDTH-1:0] a, b,
+    input  [WIDTH-1:0] a, b,
     output [WIDTH-1:0] y );
     
     assign y = a - b;
@@ -44,6 +44,7 @@ module dreg #(parameter WIDTH = 1) (
         q <= d;
 endmodule
 
+//Special Register to just quickly set UF/OF to 0 or 1 depending on two flags
 module dreg_of_uf #(parameter WIDTH = 1) (
     input clk,
     input en,
@@ -58,7 +59,7 @@ module dreg_of_uf #(parameter WIDTH = 1) (
     end
 endmodule
 
-// Parameterized Register with en
+// Parameterized Register with enable
 module dreg_en #(parameter WIDTH = 8) (
 	input					clk,
 	input					en,
@@ -69,7 +70,7 @@ module dreg_en #(parameter WIDTH = 8) (
 		if (en)    q <= d;
 endmodule
 
-//Parameterized Register with en, rst, and set functions
+//Parameterized Register with enable, reset, and set functions
 module dreg_full #(parameter WIDTH = 8) (
     input clk,
     input en,
@@ -80,8 +81,8 @@ module dreg_full #(parameter WIDTH = 8) (
     
     always @(posedge clk, posedge rst)
         begin
-            if(rst)       q <= {WIDTH{1'b0}}; //replication to have variable bit width
-            else if(set)  q <= {WIDTH{1'b1}};
+            if(rst)       q <= 0;
+            else if(set)  q <= {WIDTH{1'b1}}; //set all 1's at variable width with replication operator
             else if (en)  q <= d;
         end
 
@@ -122,12 +123,6 @@ module fpmul_dp(
     input wire MPH_LD,
     input wire MPL_SEL,
     input wire MPL_LD,
-    input wire NAN_RST,
-    input wire NAN_LD,
-    input wire INF_RST,
-    input wire INF_LD,
-    input wire ZF_RST,
-    input wire ZF_LD,
     input wire UF_RST,
     input wire UF_LD,
     input wire OF_RST,
@@ -194,8 +189,8 @@ module fpmul_dp(
     assign mb = {1'b1, B[22:0]};
     
     //constants
-    wire ONE_CONSTANT = 1;
-    wire MPH_CONSTANT = 6'h800000;
+    wire ONE_CONSTANT = 1; //This seems dumb
+    wire MPH_CONSTANT = 6'h800000; //TODO: see if this is right 
     
     //internal signals
     wire SA, SB, SP_D, SP; 
@@ -203,9 +198,9 @@ module fpmul_dp(
                EP_D1, EP_D2, EP_D3, //store all intermediates after arithmetic units
                EP_Y1, EP_Y2; //store all intermediates after multiplexers
     wire [23:0] MA, MB, 
-                MPH_D1, MPH_D2, MPH_D3,
-                MPH_Y1, MPH_Y2, MPH_Y3,
-                MPL_D1, MPL_D2,
+                MPH_D1, MPH_D2, MPH_D3, //store all intermediates after arithmetic units
+                MPH_Y1, MPH_Y2, MPH_Y3, //store all intermediates after multiplexers
+                MPL_D1, MPL_D2, // after arithmetic units
                 MPL_Y1,
                 MPH, MPL;
     wire P_SIGN;
@@ -343,7 +338,7 @@ module fpmul_dp(
     .q(MPL));
     
     //mph stuff below
-    assign MPH_D0 = MP[47:24];
+    assign MPH_D1 = MP[47:24];
     
     //adder for MPH + 1
     adder #(mantissa_width2) mph_add (
@@ -359,7 +354,7 @@ module fpmul_dp(
     
     //mph mux that looks at mph_sel[2]; chooses between MP[47:24] and 0x800000
     mux2 #(mantissa_width2) mph_mux1 (
-    .d0(MPH_D0),
+    .d0(MPH_D1),
     .d1(MPH_CONSTANT),
     .s(MPH_SEL[2]),
     .y(MPH_Y1));
@@ -386,6 +381,8 @@ module fpmul_dp(
     .set(MPH_SET),
     .d(MPH_Y3),
     .q(MPH));
+    
+    assign MPH23 = MPH[23];
     
     /* flag logic goes here */
     
