@@ -105,7 +105,7 @@ module fpmul_dp(
     input wire [31:0] A,
     input wire [31:0] B,
     
-    //control signals TODO
+    //control signals
     input wire SA_LD,
     input wire EA_LD,
     input wire MA_LD,
@@ -190,7 +190,7 @@ module fpmul_dp(
     
     //constants
     wire ONE_CONSTANT = 1; //This seems dumb
-    wire MPH_CONSTANT = 6'h800000; //TODO: see if this is right 
+    wire MPH_CONSTANT = 24'h800000; //TODO: see if this is right 
     
     //internal signals
     wire SA, SB, SP_D, SP; 
@@ -212,12 +212,11 @@ module fpmul_dp(
     wire EA_ZF_C, EA_ZF, EA_HF_C, EA_HF, 
          MA_ZF_C, MA_ZF, MA_HF_C, MA_HF,
          EB_ZF_C, EB_ZF, EB_HF_C, EB_HF,
-         MB_ZF_C, MB_ZF, MB_HF_C, MH_HF,
+         MB_ZF_C, MB_ZF, MB_HF_C, MB_HF,
          EP_ZF, EP_HF, MPH_ZF, MPH_HF; //used for product overflow calculation
          
     wire A_NANF, A_INFF, A_NF, A_DNF, A_ZF,
-         B_NANF, B_INFF, B_NF, B_DNF, B_ZF,
-         P_NANF, P_INFF, B_NF, B_DNF, B_ZF;
+         B_NANF, B_INFF, B_NF, B_DNF, B_ZF;
          
      wire Op_NaN_C, Op_Inf_C, Op_Zero_C,
           NaN_C, Inf_C, Zero_C, Dnf_C;
@@ -315,7 +314,7 @@ module fpmul_dp(
     .b({1'b0, MB}),
     .p(MP));
     
-    assign MBL_D1 = MP[23:0];
+    assign MPL_D1 = MP[23:0];
     
     //shifter for mpl = {mpl[22:0], 0}
     sl_one #(mantissa_width2) mpl_shift (
@@ -536,7 +535,7 @@ module fpmul_dp(
    .q(P_OF));
   
   //Product business below
-    assign SP_D = SA ^ SB;
+   assign SP_D = SA ^ SB;
   //Product signed bit register
   dreg_en #(sign_width) sp_reg (
   .clk(clk),

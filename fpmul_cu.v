@@ -154,7 +154,7 @@ begin
             EB_LD = 1'b1;
             MB_LD = 1'b1;
         end
-        S2: begin //TODO: zero and high registers for A and B
+        S2: begin
             SP_LD = 1'b1;
             EP_SEL = 2'b00; //select ep - 127 to load into ep reg
             EP_LD = 1'b1; 
