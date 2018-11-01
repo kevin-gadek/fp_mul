@@ -1,4 +1,3 @@
-
 module fpmul(
     input wire Clk,
     input wire Rst,
@@ -36,12 +35,6 @@ module fpmul(
     wire UF_LD;
     wire OF_RST;
     wire OF_LD;
-    wire NAN_LD;
-    wire NAN_RST;
-    wire INF_LD;
-    wire INF_RST;
-    wire ZF_LD;
-    wire ZF_RST;
     wire P_LD;
     wire P_RST;
     
@@ -49,7 +42,7 @@ module fpmul(
     wire NaN;
     wire Inf;
     wire Zero;
-    wire MAP23;
+    wire MPH23;
     wire Round;
     wire Carry;
     wire UFlow;
@@ -119,14 +112,6 @@ module fpmul(
     .UF_LD(UF_LD),
     .OF_RST(OF_RST),
     .OF_LD(OF_LD),  
-    .NAN_RST(NAN_RST),
-    .NAN_LD(NAN_LD),
-    .INF_RST(INF_RST),
-    .INF_LD(INF_LD),
-    .DNF_RST(DNF_RST),
-    .DNF_LD(DNF_LD),
-    .ZF_RST(ZF_RST),
-    .ZF_LD(ZF_LD),
     .P_RST(P_RST),
     .P_LD(P_LD),
     .Op_NaN(NaN),

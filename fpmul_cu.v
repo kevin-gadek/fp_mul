@@ -26,12 +26,6 @@ module fpmul_cu (
     output reg UF_LD, 
     output reg OF_RST,
     output reg OF_LD,
-    output reg NAN_RST,
-    output reg NAN_LD,
-    output reg INF_RST,
-    output reg INF_LD,
-    output reg ZF_RST,
-    output reg ZF_LD,
     output reg P_RST,
     output reg P_LD,
     

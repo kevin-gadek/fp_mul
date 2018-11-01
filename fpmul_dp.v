@@ -189,7 +189,7 @@ module fpmul_dp(
     assign mb = {1'b1, B[22:0]};
     
     //constants
-    wire ONE_CONSTANT = 1; //This seems dumb
+    wire ONE_CONSTANT = 1; 
     wire MPH_CONSTANT = 24'h800000; //TODO: see if this is right 
     
     //internal signals
